@@ -9,6 +9,7 @@ public class GameHandler : MonoBehaviour
 
     int startPlayer = 0;
     int currentPlayer;
+    int inputScore;
 
     private void Awake() {
         playerHandler = new PlayerHandler();
@@ -20,7 +21,7 @@ public class GameHandler : MonoBehaviour
     }
 
     private void UpdateUI() {
-        uiHandler.UpdateUI();
+        uiHandler.UpdateUI(inputScore);
     }
 
     public void StartGame() {
@@ -29,6 +30,23 @@ public class GameHandler : MonoBehaviour
         }
 
         currentPlayer = startPlayer;
+        inputScore = 0;
+    }
+    
+    public void AddToInputScore(int bumpAmount) {
+        inputScore = int.Parse(inputScore.ToString() + bumpAmount.ToString());
+        UpdateUI();
+    }
+
+    public void RemoveLastDigitFromInputScore() {
+        string scoreString = inputScore.ToString();
+        if(scoreString.Length > 1) {
+        inputScore = int.Parse(scoreString.Substring(0, scoreString.Length - 1));
+        }
+        else {
+            inputScore = 0;
+        }
+        UpdateUI();
     }
 
     public void OpenAddPlayersWindow() {

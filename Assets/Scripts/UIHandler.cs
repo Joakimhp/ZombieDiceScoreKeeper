@@ -20,8 +20,8 @@ public class UIHandler : MonoBehaviour
         playerUIHandler.Initialize(gameHandler);
     }
 
-    public void UpdateUI(int inputScore) {
-        playerUIHandler.UpdateUI();
+    public void UpdateUI(int inputScore, int currentPlayerIndex) {
+        playerUIHandler.UpdateUI(currentPlayerIndex);
         gameOverviewUIHandler.UpdateUI(inputScore);
     }
 

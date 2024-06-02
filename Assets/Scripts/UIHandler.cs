@@ -14,14 +14,15 @@ public class UIHandler : MonoBehaviour
         menuUIHandler.Initialize(gameHandler);
 
         gameOverviewUIHandler = GetComponentInChildren<GameOverviewUIHandler>();
-        gameOverviewUIHandler.Initialize();
+        gameOverviewUIHandler.Initialize(gameHandler);
 
         playerUIHandler = GetComponentInChildren<PlayerUIHandler>();
         playerUIHandler.Initialize(gameHandler);
     }
 
-    public void UpdateUI() {
-        playerUIHandler.UpdateUI();
+    public void UpdateUI(int inputScore, int currentPlayerIndex) {
+        playerUIHandler.UpdateUI(currentPlayerIndex);
+        gameOverviewUIHandler.UpdateUI(inputScore);
     }
 
     public void OpenGameWindow() {

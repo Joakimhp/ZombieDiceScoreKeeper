@@ -10,8 +10,11 @@ public class PlayerUIHandler : MonoBehaviour
     GameObject playerPrefab;
     VerticalLayoutGroup playerLayout;
     int playerCount;
+    GameHandler gameHandler;
 
     public void Initialize(GameHandler gameHandler) {
+        this.gameHandler = gameHandler;
+
         players = gameHandler.GetPlayers();
         playerCount = players.Count;
         playerPrefab = (GameObject)Resources.Load("PlayerUIPrefab");
@@ -20,7 +23,7 @@ public class PlayerUIHandler : MonoBehaviour
         playerScoreUIHandlers = new List<PlayerScoreUIHandler>();
     }
 
-    public void UpdateUI() {
+    public void UpdateUI(int currentPlayerIndex) {
 
         if (players.Count > playerCount) {
             for (int i = 0; i < players.Count - playerCount; i++) {
@@ -41,7 +44,9 @@ public class PlayerUIHandler : MonoBehaviour
         
 
         for (int i = 0; i < playerScoreUIHandlers.Count; i++) {
-            playerScoreUIHandlers[i].UpdateTexts(players[i]);
+            bool isCurrentPlayer = (i == currentPlayerIndex);
+            bool isStartingPlayer = (i == gameHandler.originalStarPlayerIndex);
+            playerScoreUIHandlers[i].UpdateTextsAndBackground(players[i], isCurrentPlayer, isStartingPlayer);
         }
     }
 

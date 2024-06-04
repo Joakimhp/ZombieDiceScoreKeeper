@@ -25,53 +25,56 @@ public class PlayerUIHandler : MonoBehaviour
 
     public void UpdateUI(int currentPlayerIndex) {
 
+
         if (players.Count > playerCount) {
-            for (int i = 0; i < players.Count - playerCount; i++) {
-                CreatePlayerObject();
+            for (int i = playerCount; i < players.Count; i++) {
+                CreatePlayerObject(players[i]);
             }
             playerCount = players.Count;
         }
+        else if (players.Count < playerCount) {
+            Debug.Log("Players.Count: " + players.Count + " - " + "playerCount: " + playerCount);
+            for (int i = 0; i < playerCount - players.Count; i++) {
+                DestroyPlayerObject(i);
+            }
+            playerCount = players.Count;
+            print("new playerCount: " + playerCount);
+        }
 
-        //if (players.Count != playerCount) {
-        //    playerCount = players.Count;
-
-        //    Debug.Log("Gotta update the ui");
-        //    DestroyPlayerObjects();
-        //    //players = gameHandler.GetPlayers();
-        //    CreatePlayerObjects();
-        //}
-
-        
-
+        List<int> mostWinsPlayerIndeces = gameHandler.GetPlayerIndecesWithMostWins();
+        bool showRemovePlayerButtons = gameHandler.IsManagingPlayers();
         for (int i = 0; i < playerScoreUIHandlers.Count; i++) {
             bool isCurrentPlayer = (i == currentPlayerIndex);
-            bool isStartingPlayer = (i == gameHandler.originalStarPlayerIndex);
-            playerScoreUIHandlers[i].UpdateTextsAndBackground(players[i], isCurrentPlayer, isStartingPlayer);
+            bool isStartingPlayer = (i == gameHandler.originalStartPlayerIndex);
+            bool playerIsLeader = mostWinsPlayerIndeces.Contains(i);
+
+            playerScoreUIHandlers[i].UpdateData(players[i], playerIsLeader, isCurrentPlayer, isStartingPlayer, showRemovePlayerButtons);
         }
     }
 
-    private void CreatePlayerObject() {
+    private void CreatePlayerObject(PlayerData player) {
         GameObject newObject = Instantiate(playerPrefab, playerLayout.transform);
-        newObject.GetComponent<PlayerScoreUIHandler>().Initialize();
+        newObject.GetComponent<PlayerScoreUIHandler>().Initialize(gameHandler, player);
         playerScoreUIHandlers.Add(newObject.GetComponent<PlayerScoreUIHandler>());
     }
 
-    //private void DestroyPlayerObjects() {
-    //        for (int i = playerLayout.transform.childCount-1; i > 0; i--) {
-    //            Destroy(playerLayout.transform.GetChild(i));
-    //        }
-    //    //while (playerLayout.transform.childCount > 0) {
-    //    //    Destroy(playerLayout.transform.GetChild(0).gameObject);
-    //    //    Debug.Log("childCount: " + playerLayout.transform.childCount);
-    //    //    yield return new WaitForEndOfFrame();
-    //    //}
+    private void DestroyPlayerObject(int playerIndex) {
+        GameObject objectToRemove = playerScoreUIHandlers[playerIndex].gameObject;
+        playerScoreUIHandlers.RemoveAt(playerIndex);
+        Destroy(objectToRemove);
+    }
 
-    //}
+    public void DisableScoreEditing() {
+        foreach (PlayerScoreUIHandler playerScoreUIHandler in playerScoreUIHandlers) {
+            playerScoreUIHandler.DisableScoreEditing();
 
-    //private void CreatePlayerObjects() {
-    //    for (int i = 0; i < players.Count; i++) {
-    //        GameObject newObject = Instantiate(playerPrefab, playerLayout.transform);
-    //        newObject.GetComponent<PlayerScoreUIHandler>().Initialize();
-    //    }
-    //}
+        }
+    }
+
+    public void EnableScoreEditing() {
+        foreach (PlayerScoreUIHandler playerScoreUIHandler in playerScoreUIHandlers) {
+            playerScoreUIHandler.EnableScoreEditing();
+
+        }
+    }
 }
